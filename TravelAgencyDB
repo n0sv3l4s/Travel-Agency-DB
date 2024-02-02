@@ -1,0 +1,185 @@
+CREATE DATABASE TravelAgencyDB;
+
+USE TravelAgencyDB;
+
+CREATE TABLE Customers (
+  customer_id INT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  phone VARCHAR(20) UNIQUE NOT NULL,
+  address VARCHAR(200) UNIQUE NOT NULL,
+  city VARCHAR(100) NOT NULL,
+  country VARCHAR(100) NOT NULL
+);
+
+
+CREATE TABLE Bookings (
+  booking_id INT PRIMARY KEY,
+  customer_id INT UNIQUE NOT NULL,
+  booking_date DATE NOT NULL,
+  payment_status VARCHAR(20) NOT NULL,
+  total_amount DECIMAL(10, 2) NOT NULL,
+  FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
+);
+
+
+CREATE TABLE Flights (
+  flight_id INT PRIMARY KEY,
+  airline VARCHAR(100) NOT NULL,
+  departure_location VARCHAR(100) NOT NULL,
+  destination VARCHAR(100) NOT NULL,
+  departure_time DATETIME NOT NULL,
+  arrival_time DATETIME NOT NULL,
+  ticket_price DECIMAL(10, 2) NOT NULL,
+  available_seats INT NOT NULL,
+  flight_status VARCHAR(20) NOT NULL
+);
+
+
+CREATE TABLE Hotels (
+  hotel_id INT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  address VARCHAR(200) UNIQUE NOT NULL,
+  contact_info VARCHAR(100) NOT NULL,
+  amenities VARCHAR(200) NOT NULL,
+  room_types VARCHAR(200) NOT NULL,
+  star_rating INT NOT NULL,
+  website VARCHAR(200) NOT NULL
+);
+
+
+CREATE TABLE RoomBookings (
+  booking_id INT UNIQUE NOT NULL,
+  customer_id INT UNIQUE NOT NULL,
+  hotel_id INT UNIQUE NOT NULL,
+  check_in_date DATE NOT NULL,
+  check_out_date DATE NOT NULL,
+  room_type VARCHAR(50) NOT NULL,
+  payment_status VARCHAR(20) NOT NULL,
+  total_amount DECIMAL(10, 2) NOT NULL,
+  FOREIGN KEY (booking_id) REFERENCES Bookings(booking_id),
+  FOREIGN KEY (customer_id) REFERENCES Customers(customer_id),
+  FOREIGN KEY (hotel_id) REFERENCES Hotels(hotel_id)
+);
+
+
+CREATE TABLE CarRentals (
+  rental_id INT PRIMARY KEY,
+  car_type VARCHAR(100) NOT NULL,
+  rental_company VARCHAR(100) NOT NULL,
+  pickup_location VARCHAR(100) NOT NULL,
+  return_location VARCHAR(100) NOT NULL,
+  rental_dates VARCHAR(100) NOT NULL,
+  rental_price DECIMAL(10, 2) NOT NULL,
+  rental_status VARCHAR(20) NOT NULL
+);
+
+
+CREATE TABLE Activities (
+  activity_id INT PRIMARY KEY,
+  description VARCHAR(200) NOT NULL,
+  duration VARCHAR(50) NOT NULL,
+  location VARCHAR(100) NOT NULL,
+  cost DECIMAL(10, 2) NOT NULL,
+  activity_date DATE NOT NULL
+);
+
+
+CREATE TABLE PaymentTransactions (
+  transaction_id INT PRIMARY KEY,
+  booking_id INT UNIQUE NOT NULL,
+  payment_method VARCHAR(50) NOT NULL,
+  transaction_date DATE NOT NULL,
+  transaction_status VARCHAR(20) NOT NULL,
+  amount DECIMAL(10, 2) NOT NULL,
+  FOREIGN KEY (booking_id) REFERENCES Bookings(booking_id)
+);
+
+
+CREATE TABLE Reviews (
+  review_id INT PRIMARY KEY,
+  customer_id INT UNIQUE NOT NULL,
+  rating DECIMAL(2, 1) NOT NULL,
+  comments VARCHAR(500) NOT NULL,
+  review_date DATE NOT NULL,
+  FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
+);
+
+INSERT INTO Customers (customer_id, name, email, phone, address, city, country)
+VALUES 
+  (1, 'John Doe', 'john.doe@example.com', '555-1234', '123 Main St', 'Athens', 'Greece'),
+  (2, 'Jane Smith', 'jane.smith@example.com', '555-5678', '456 Elm St', 'Thessaloniki', 'Greece'),
+  (3, 'Michael Johnson', 'michael.johnson@example.com', '555-9012', '789 Oak St', 'Heraklion', 'Greece'),
+  (4, 'Emily Davis', 'emily.davis@example.com', '555-3456', '321 Pine St', 'Rhodes', 'Greece'),
+  (5, 'David Wilson', 'david.wilson@example.com', '555-7890', '654 Cedar St', 'Santorini', 'Greece');
+
+
+INSERT INTO Bookings (booking_id, customer_id, booking_date, payment_status, total_amount)
+VALUES 
+  (1, 1, '2023-05-27', 'Paid', 1250.00),
+  (2, 2, '2023-05-28', 'Pending', 750.00),
+  (3, 3, '2023-05-29', 'Paid', 2400.00),
+  (4, 4, '2023-05-30', 'Paid', 900.00),
+  (5, 5, '2023-05-31', 'Pending', 1650.00);
+
+
+INSERT INTO Flights (flight_id, airline, departure_location, destination, departure_time, arrival_time, ticket_price, available_seats, flight_status)
+VALUES 
+  (1, 'Airline A', 'New York', 'Athens', '2023-05-27 10:00:00', '2023-05-27 15:30:00', 800.00, 100, 'On-time'),
+  (2, 'Airline B', 'Los Angeles', 'Thessaloniki', '2023-05-28 12:30:00', '2023-05-29 18:45:00', 1200.00, 150, 'Delayed'),
+  (3, 'Airline C', 'Chicago', 'Heraklion', '2023-05-29 08:45:00', '2023-05-29 17:15:00', 950.00, 80, 'On-time'),
+  (4, 'Airline D', 'London', 'Rhodes', '2023-05-30 14:00:00', '2023-05-30 20:30:00', 700.00, 120, 'On-time'),
+  (5, 'Airline E', 'Sydney', 'Santorini', '2023-05-31 11:15:00', '2023-06-01 04:30:00', 1400.00, 90, 'Delayed');
+
+
+INSERT INTO Hotels (hotel_id, name, address, contact_info, amenities, room_types, star_rating, website)
+VALUES 
+  (1, 'Luxury Resort', '123 Ocean View Blvd', '+1-555-1234', 'Pool, Spa, Gym, Wi-Fi', 'Deluxe Room, Suite', 5, 'luxuryresort.com'),
+  (2, 'City Hotel', '456 Downtown Ave', '+1-555-5678', 'Wi-Fi, Restaurant, Bar', 'Standard Room, Executive Suite', 4, 'cityhotel.com'),
+  (3, 'Mountain Lodge', '789 Pine Trail', '+1-555-9012', 'Scenic Views, Fireplace, Spa', 'Standard Cabin, Luxury Chalet', 4, 'mountainlodge.com'),
+  (4, 'Seaside Inn', '321 Beachside Rd', '+44-555-3456', 'Beach Access, Restaurant', 'Sea View Room, Family Suite', 3, 'seasideinn.com'),
+  (5, 'Urban Retreat', '654 Downtown Lane', '+61-555-7890', 'Rooftop Pool, Fitness Center', 'City View Room, Studio Apartment', 4, 'urbanretreat.com');
+
+
+INSERT INTO RoomBookings (booking_id, customer_id, hotel_id, check_in_date, check_out_date, room_type, payment_status, total_amount)
+VALUES 
+  (1, 1, 1, '2023-05-27', '2023-05-29', 'Deluxe Room', 'Paid', 800.00),
+  (2, 2, 2, '2023-05-28', '2023-05-30', 'Standard Room', 'Pending', 600.00),
+  (3, 3, 3, '2023-05-29', '2023-05-31', 'Standard Cabin', 'Paid', 900.00),
+  (4, 4, 4, '2023-05-30', '2023-06-01', 'Sea View Room', 'Paid', 400.00),
+  (5, 5, 5, '2023-05-31', '2023-06-02', 'City View Room', 'Pending', 750.00);
+
+
+INSERT INTO CarRentals (rental_id, car_type, rental_company, pickup_location, return_location, rental_dates, rental_price, rental_status)
+VALUES 
+  (1, 'Sedan', 'Rental Company A', 'Athens', 'Athens', '2023-05-27 to 2023-05-29', 150.00, 'Active'),
+  (2, 'SUV', 'Rental Company B', 'Thessaloniki', 'Thessaloniki', '2023-05-28 to 2023-05-30', 200.00, 'Active'),
+  (3, 'Compact', 'Rental Company A', 'Heraklion', 'Heraklion', '2023-05-29 to 2023-05-31', 180.00, 'Active'),
+  (4, 'Luxury', 'Rental Company C', 'Rhodes', 'Rhodes', '2023-05-30 to 2023-06-01', 250.00, 'Active'),
+  (5, 'Sedan', 'Rental Company B', 'Santorini', 'Santorini', '2023-05-31 to 2023-06-02', 160.00, 'Active');
+
+INSERT INTO Activities (activity_id, description, duration, location, cost, activity_date)
+VALUES 
+  (1, 'City Tour', '3 hours', 'City A', 50.00, '2023-05-27'),
+  (2, 'Hiking Adventure', '5 hours', 'City B', 80.00, '2023-05-28'),
+  (3, 'Beach Volleyball', '2 hours', 'City C', 30.00, '2023-05-29'),
+  (4, 'Museum Visit', '4 hours', 'City D', 40.00, '2023-05-30'),
+  (5, 'Boat Cruise', '2 hours', 'City E', 60.00, '2023-05-31');
+
+
+INSERT INTO PaymentTransactions (transaction_id, booking_id, payment_method, transaction_date, transaction_status, amount)
+VALUES 
+  (1, 1, 'Credit Card', '2023-05-27', 'Success', 800.00),
+  (2, 2, 'PayPal', '2023-05-28', 'Pending', 600.00),
+  (3, 3, 'Credit Card', '2023-05-29', 'Success', 900.00),
+  (4, 4, 'Debit Card', '2023-05-30', 'Success', 400.00),
+  (5, 5, 'PayPal', '2023-05-31', 'Pending', 750.00);
+
+
+INSERT INTO Reviews (review_id, customer_id, rating, comments, review_date)
+VALUES 
+  (1, 1, 4.5, 'Great service and facilities!', '2023-05-29'),
+  (2, 2, 3.8, 'Good location, but room was small.', '2023-05-30'),
+  (3, 3, 5.0, 'Highly recommended! Amazing experience.', '2023-05-31'),
+  (4, 4, 4.0, 'Nice hotel, friendly staff.', '2023-06-01'),
+  (5, 5, 4.2, 'Comfortable room and convenient location.', '2023-06-02');
